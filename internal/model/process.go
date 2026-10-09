@@ -17,6 +17,9 @@ type PortProcess struct {
 	// Cmdline is the full command-line invocation of the process.
 	Cmdline string `json:"cmdline"`
 
+	// User is the username owning the process, if accessible.
+	User string `json:"user,omitempty"`
+
 	// IsContainer indicates whether the process is associated with a container engine.
 	IsContainer bool `json:"is_container"`
 
