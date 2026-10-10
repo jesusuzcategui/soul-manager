@@ -44,8 +44,9 @@ type ProcessProvider func(ctx context.Context, pid int32) (*ProcessDetails, erro
 
 // DefaultScanner implements Scanner by inspecting network sockets and resolving system processes.
 type DefaultScanner struct {
-	connProvider ConnectionsProvider
-	procProvider ProcessProvider
+	connProvider      ConnectionsProvider
+	procProvider      ProcessProvider
+	containerResolver ContainerNameResolver
 }
 
 // New creates and returns a new Scanner using default system providers.
@@ -56,8 +57,9 @@ func New() Scanner {
 // NewDefaultScanner returns a concrete *DefaultScanner configured with system providers.
 func NewDefaultScanner() *DefaultScanner {
 	return &DefaultScanner{
-		connProvider: gopsnet.ConnectionsWithContext,
-		procProvider: defaultProcessProvider,
+		connProvider:      gopsnet.ConnectionsWithContext,
+		procProvider:      defaultProcessProvider,
+		containerResolver: NewContainerNameResolver(),
 	}
 }
 
@@ -143,6 +145,11 @@ func (s *DefaultScanner) Scan(ctx context.Context) ([]model.PortProcess, error) 
 
 		isContainer, containerType := IdentifyContainer(procDetails.Name, procDetails.Cmdline)
 
+		var containerName string
+		if isContainer && s.containerResolver != nil {
+			containerName = s.containerResolver.Resolve(ctx, pid, port)
+		}
+
 		item := model.PortProcess{
 			Port:          port,
 			Protocol:      protocol,
@@ -152,6 +159,7 @@ func (s *DefaultScanner) Scan(ctx context.Context) ([]model.PortProcess, error) 
 			User:          procDetails.Username,
 			IsContainer:   isContainer,
 			ContainerType: containerType,
+			ContainerName: containerName,
 		}
 
 		key := portPIDKey{port: port, pid: pid}
@@ -222,7 +230,11 @@ func IdentifyContainer(name, cmdline string) (bool, string) {
 	switch {
 	case strings.Contains(combined, "docker-proxy") || strings.Contains(n, "dockerd"):
 		return true, "Docker"
-	case strings.Contains(combined, "podman") || strings.Contains(combined, "conmon"):
+	case strings.Contains(combined, "rootlessport") ||
+		strings.Contains(combined, "slirp4netns") ||
+		strings.Contains(combined, "gvproxy") ||
+		strings.Contains(combined, "podman") ||
+		strings.Contains(combined, "conmon"):
 		return true, "Podman"
 	case strings.Contains(combined, "containerd-shim") || strings.Contains(combined, "containerd") || strings.Contains(combined, "nerdctl"):
 		return true, "Containerd"

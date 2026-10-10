@@ -201,14 +201,11 @@ func TestKill_PermissionDenied_Mocked(t *testing.T) {
 }
 
 func TestKill_PermissionDenied_RealSystem(t *testing.T) {
-	// If running unprivileged on Linux, PID 2 (kthreadd) is root-owned and returns EPERM
-	if os.Getuid() == 0 {
-		t.Skip("skipping real system permission denied test when running as root")
-	}
-
-	// Check if PID 2 exists
-	if err := syscall.Kill(2, 0); err != nil && !errors.Is(err, syscall.EPERM) {
-		t.Skip("PID 2 does not exist or cannot be tested on this host")
+	// Signal 0 proves this host refuses signals to PID 2 before the test sends
+	// SIGTERM. Some containers expose a different process as PID 2 or grant
+	// CAP_KILL, so a successful probe must skip rather than terminate it.
+	if err := syscall.Kill(2, 0); !errors.Is(err, syscall.EPERM) {
+		t.Skip("PID 2 is absent or signalable on this host")
 	}
 
 	k := NewDefaultKiller()

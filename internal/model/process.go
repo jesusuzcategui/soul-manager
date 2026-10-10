@@ -25,4 +25,9 @@ type PortProcess struct {
 
 	// ContainerType identifies the container runtime or proxy type (e.g. "docker", "podman", "containerd").
 	ContainerType string `json:"container_type"`
+
+	// ContainerName is the resolved human-readable name of the container that
+	// owns the port (e.g. "my-postgres"). It is empty when the owner is not a
+	// container or its name could not be resolved.
+	ContainerName string `json:"container_name,omitempty"`
 }

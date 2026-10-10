@@ -1,16 +1,15 @@
 package main
 
 import (
-	"fmt"
-
-	_ "fyne.io/fyne/v2"
-	_ "github.com/shirou/gopsutil/v3/net"
-	_ "github.com/shirou/gopsutil/v3/process"
-
-	"github.com/jesusuzcategui/soul-app/internal/model"
+	"github.com/jesusuzcategui/soul-app/internal/killer"
+	"github.com/jesusuzcategui/soul-app/internal/scanner"
+	"github.com/jesusuzcategui/soul-app/internal/ui"
 )
 
 func main() {
-	fmt.Println("Soul App skeleton initialized.")
-	_ = model.PortProcess{}
+	newApp().Run()
+}
+
+func newApp() *ui.App {
+	return ui.New(scanner.New(), killer.New())
 }

@@ -13,7 +13,7 @@ When running local development environments (Node.js, Python, Go, Docker, Podman
 
 ## Features
 - **TCP Port Monitoring**: Lists active TCP sockets in `LISTEN` mode (`0.0.0.0`, `127.0.0.1`, `::1`).
-- **Process & Container Identification**: Resolves PID, executable name, command-line arguments, and flags Docker/Podman container shims (e.g. `docker-proxy`, `conmon`).
+- **Process & Container Identification**: Resolves PID, executable name, command-line arguments, and flags Docker/Podman container shims (e.g. `docker-proxy`, `conmon`), then resolves the **real container name** (via `/proc/<pid>/cgroup` and the `docker`/`podman` CLIs) so each port shows the actual service.
 - **Real-Time Search & Filtering**: Instant fuzzy filtering by port number, executable name, or PID.
 - **One-Click Process Termination**: Sends `SIGTERM` (graceful) and `SIGKILL` (forced) with user feedback for permission issues.
 - **System Tray Integration**: Stays docked in the taskbar/tray menu for instant access and minimal desktop clutter.
@@ -77,6 +77,8 @@ xattr -d com.apple.quarantine /path/to/soul
 xattr -dr com.apple.quarantine /Applications/Soul.app
 ```
 
+Only do this for an app or archive you obtained from the project's GitHub Releases and trust. Removing the quarantine attribute disables a macOS download-protection check for that item.
+
 ### Method 2: System Settings
 1. Attempt to open the app once (triggering the warning dialog), then close it.
 2. Go to **System Settings** > **Privacy & Security**.
@@ -88,8 +90,10 @@ xattr -dr com.apple.quarantine /Applications/Soul.app
 ## CI/CD Releases (GitHub Actions)
 Soul App uses a multi-platform GitHub Actions workflow (`.github/workflows/release.yml`) to automatically compile and publish binaries for:
 - **Linux**: x86_64 tarball (`soul-linux-amd64.tar.gz`)
-- **macOS**: Universal / Apple Silicon + Intel (`soul-darwin-universal.zip` or `.app`)
+- **macOS**: Native archive for the architecture provided by `macos-latest` (`soul-darwin-arm64.zip` or `soul-darwin-x64.zip`) containing `Soul.app`
 - **Windows**: x86_64 executable (`soul-windows-amd64.zip`)
+
+The workflow runs when a version tag such as `v1.0.0` is pushed.
 
 ---
 

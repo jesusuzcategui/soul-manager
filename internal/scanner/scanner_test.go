@@ -112,6 +112,27 @@ func TestIdentifyContainer(t *testing.T) {
 			wantContainerType: "Podman",
 		},
 		{
+			name:              "rootlessport bare cmdline",
+			procName:          "rootlessport",
+			cmdline:           "rootlessport",
+			wantIsContainer:   true,
+			wantContainerType: "Podman",
+		},
+		{
+			name:              "slirp4netns",
+			procName:          "slirp4netns",
+			cmdline:           "slirp4netns --configure --mtu=65520 --disable-host-loopback 1234 tap0",
+			wantIsContainer:   true,
+			wantContainerType: "Podman",
+		},
+		{
+			name:              "gvproxy (podman machine)",
+			procName:          "gvproxy",
+			cmdline:           "/usr/libexec/podman/gvproxy -listen-vsock 123",
+			wantIsContainer:   true,
+			wantContainerType: "Podman",
+		},
+		{
 			name:              "containerd-shim",
 			procName:          "containerd-shim-runc-v2",
 			cmdline:           "/usr/bin/containerd-shim-runc-v2 -namespace moby",
