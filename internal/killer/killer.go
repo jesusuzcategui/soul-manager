@@ -56,7 +56,7 @@ func New() Killer {
 // NewDefaultKiller returns a concrete *DefaultKiller configured with the default OS signal handler.
 func NewDefaultKiller(opts ...Option) *DefaultKiller {
 	k := &DefaultKiller{
-		signalFunc: syscall.Kill,
+		signalFunc: killProcess,
 	}
 	for _, opt := range opts {
 		opt(k)
@@ -77,7 +77,7 @@ func (k *DefaultKiller) Kill(pid int32, force bool) error {
 
 	signalFn := k.signalFunc
 	if signalFn == nil {
-		signalFn = syscall.Kill
+		signalFn = killProcess
 	}
 
 	err := signalFn(int(pid), sig)
@@ -96,7 +96,7 @@ func (k *DefaultKiller) IsAlive(pid int32) bool {
 
 	signalFn := k.signalFunc
 	if signalFn == nil {
-		signalFn = syscall.Kill
+		signalFn = killProcess
 	}
 
 	// Signal 0 checks for process existence without sending an actual signal.
