@@ -55,8 +55,8 @@ func TestApp_Initialization(t *testing.T) {
 	if app.Window() == nil {
 		t.Fatal("expected non-nil Window")
 	}
-	if app.Window().Title() != DefaultWindowTitle {
-		t.Fatalf("expected title %q, got %q", DefaultWindowTitle, app.Window().Title())
+	if app.Window().Title() != WindowTitle() {
+		t.Fatalf("expected title %q, got %q", WindowTitle(), app.Window().Title())
 	}
 	if app.State() == nil {
 		t.Fatal("expected non-nil State")

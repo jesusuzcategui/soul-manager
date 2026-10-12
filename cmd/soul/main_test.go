@@ -21,8 +21,8 @@ func TestNewApp_WiresMainWindow(t *testing.T) {
 	if app.Window() == nil {
 		t.Fatal("expected application window")
 	}
-	if got := app.Window().Title(); got != ui.DefaultWindowTitle {
-		t.Fatalf("window title = %q, want %q", got, ui.DefaultWindowTitle)
+	if got := app.Window().Title(); got != ui.WindowTitle() {
+		t.Fatalf("window title = %q, want %q", got, ui.WindowTitle())
 	}
 	if app.State() == nil || app.View() == nil {
 		t.Fatal("expected UI state and view to be initialized")

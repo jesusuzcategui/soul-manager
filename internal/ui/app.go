@@ -16,6 +16,7 @@ import (
 	"github.com/jesusuzcategui/soul-app/internal/killer"
 	"github.com/jesusuzcategui/soul-app/internal/model"
 	"github.com/jesusuzcategui/soul-app/internal/scanner"
+	"github.com/jesusuzcategui/soul-app/internal/version"
 )
 
 const (
@@ -79,6 +80,11 @@ func New(s scanner.Scanner, k killer.Killer) *App {
 	return NewWithFyneApp(fa, s, k)
 }
 
+// WindowTitle returns the main window title including the application version.
+func WindowTitle() string {
+	return fmt.Sprintf("%s v%s", DefaultWindowTitle, version.Value)
+}
+
 // NewWithFyneApp initializes a new Soul App with an injected fyne.App instance (for tests or custom drivers).
 func NewWithFyneApp(fa fyne.App, s scanner.Scanner, k killer.Killer) *App {
 	if s == nil {
@@ -104,7 +110,7 @@ func NewWithFyneApp(fa fyne.App, s scanner.Scanner, k killer.Killer) *App {
 
 // buildUI configures the main window and associates views.
 func (a *App) buildUI() {
-	a.window = a.fyneApp.NewWindow(DefaultWindowTitle)
+	a.window = a.fyneApp.NewWindow(WindowTitle())
 	a.window.Resize(fyne.NewSize(DefaultWindowWidth, DefaultWindowHeight))
 	a.window.SetIcon(appIcon)
 
