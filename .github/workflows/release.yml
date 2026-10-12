@@ -26,6 +26,17 @@ jobs:
         with:
           go-version: stable
 
+      - name: Verify tag matches embedded VERSION
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          file_version="$(tr -d '[:space:]' < internal/version/VERSION)"
+          tag_version="${GITHUB_REF_NAME#v}"
+          if [ "$file_version" != "$tag_version" ]; then
+            echo "Tag v$tag_version does not match internal/version/VERSION (=$file_version)" >&2
+            exit 1
+          fi
+
       - name: Install Linux graphics dependencies
         if: runner.os == 'Linux'
         run: |
