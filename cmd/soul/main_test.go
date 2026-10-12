@@ -3,11 +3,16 @@ package main
 import (
 	"testing"
 
+	"fyne.io/fyne/v2/test"
+
 	"github.com/jesusuzcategui/soul-app/internal/ui"
 )
 
+// TestNewApp_WiresMainWindow verifies the production wiring using the Fyne test
+// driver. The production driver (GLFW) requires a display server, which is not
+// available on headless CI runners, so the test app is injected instead.
 func TestNewApp_WiresMainWindow(t *testing.T) {
-	app := newApp()
+	app := newAppWithFyne(test.NewApp())
 	t.Cleanup(func() {
 		app.StopPolling()
 		app.FyneApp().Quit()
