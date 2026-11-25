@@ -100,4 +100,5 @@ The workflow runs when a version tag such as `v1.0.0` is pushed.
 ## Documentation
 - [SPEC.md](SPEC.md): Full technical specification and architectural breakdown.
 - [PLAN.md](PLAN.md): Sub-agent driven development plan and phase breakdown.
+- [docs/HALLAZGOS.md](docs/HALLAZGOS.md): Validation findings and how to fix them.
 
